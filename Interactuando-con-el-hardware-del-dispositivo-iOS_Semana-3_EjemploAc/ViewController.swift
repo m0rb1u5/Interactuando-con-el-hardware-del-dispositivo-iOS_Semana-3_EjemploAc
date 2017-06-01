@@ -7,14 +7,40 @@
 //
 
 import UIKit
+import CoreMotion
 
 class ViewController: UIViewController {
+    @IBOutlet weak var xEtiqueta: UILabel!
+    @IBOutlet weak var yEtiqueta: UILabel!
+    @IBOutlet weak var zEtiqueta: UILabel!
+    
+    private let manejador = CMMotionManager()
+    private let cola = OperationQueue()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        if self.manejador.isAccelerometerAvailable {
+            self.manejador.accelerometerUpdateInterval = 1.0/10.0
+            self.manejador.startAccelerometerUpdates(to: self.cola, withHandler: {
+                datos, error in
+                if error != nil {
+                    self.manejador.stopAccelerometerUpdates()
+                }
+                else {
+                    DispatchQueue.main.async(execute: {
+                        self.xEtiqueta.text = "\(datos!.acceleration.x)"
+                        self.yEtiqueta.text = "\(datos!.acceleration.y)"
+                        self.zEtiqueta.text = "\(datos!.acceleration.z)"
+                    })
+                }
+            })
+        }
+        else {
+            print("Acelerómetro no disponible")
+        }
     }
-
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
