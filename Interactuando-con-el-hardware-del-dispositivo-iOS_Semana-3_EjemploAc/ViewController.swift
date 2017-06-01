@@ -13,6 +13,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var xEtiqueta: UILabel!
     @IBOutlet weak var yEtiqueta: UILabel!
     @IBOutlet weak var zEtiqueta: UILabel!
+    @IBOutlet weak var sacudida: UILabel!
     
     private let manejador = CMMotionManager()
     private let cola = OperationQueue()
@@ -20,7 +21,6 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        
         if self.manejador.isAccelerometerAvailable {
             self.manejador.accelerometerUpdateInterval = 1.0/10.0
             self.manejador.startAccelerometerUpdates(to: self.cola, withHandler: {
@@ -33,6 +33,11 @@ class ViewController: UIViewController {
                         self.xEtiqueta.text = "\(datos!.acceleration.x)"
                         self.yEtiqueta.text = "\(datos!.acceleration.y)"
                         self.zEtiqueta.text = "\(datos!.acceleration.z)"
+                        if (datos!.acceleration.x > 1.6 ||
+                            datos!.acceleration.y > 1.6 ||
+                            datos!.acceleration.z > 1.6 ) {
+                            self.sacudida.text = "Sì!!!"
+                        }
                     })
                 }
             })
@@ -46,6 +51,9 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    @IBAction func limpiar() {
+        self.sacudida.text = ""
+    }
 
 }
 
